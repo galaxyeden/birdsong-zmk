@@ -163,11 +163,15 @@ jobs:
             cp "${{ env.build_dir }}/zephyr/zmk.${{ inputs.fallback_binary }}" "${{ env.build_dir }}/artifacts/${{ env.artifact_name }}.${{ inputs.fallback_binary }}"
           fi
 
+      - name: 'Create tarball'
+      - run: tar -cvf zmk.tar ${{ env.build_dir}}/artifacts 
+
+
       - name: Archive (${{ env.display_name }})
         uses: actions/upload-artifact@v4
         with:
           name: artifact-${{ env.artifact_name }}
-          path: ${{ env.build_dir }}/artifacts
+          path: zmk.tar
 
   merge:
     runs-on: ubuntu-latest
