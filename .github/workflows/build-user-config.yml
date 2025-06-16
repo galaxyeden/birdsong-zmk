@@ -164,14 +164,14 @@ jobs:
           fi
 
       - name: 'Create tarball'
-        run: tar -cvf zmk.tar ${{ env.build_dir}}/artifacts 
+        run: tar -cvf ${{ env.artifact_name }}.tar ${{ env.build_dir}}/artifacts 
 
 
       - name: Archive (${{ env.display_name }})
         uses: actions/upload-artifact@v4
         with:
           name: artifact-${{ env.artifact_name }}
-          path: zmk.tar
+          path: ${{ env.artifact_name }}.tar
 
   merge:
     runs-on: ubuntu-latest
