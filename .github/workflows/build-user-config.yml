@@ -164,7 +164,7 @@ jobs:
           fi
 
       - name: 'Create tarball'
-      - run: tar -cvf zmk.tar ${{ env.build_dir}}/artifacts 
+        run: tar -cvf zmk.tar ${{ env.build_dir}}/artifacts 
 
 
       - name: Archive (${{ env.display_name }})
