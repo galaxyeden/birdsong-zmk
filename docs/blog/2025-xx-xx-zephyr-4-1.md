@@ -295,7 +295,151 @@ CONFIG_SOC_SERIES_STM32F0X=y
 CONFIG_SOC_STM32F072XB=y
 ```
 
-In addition, if your board uses RGB underglow, the following Kconfig flag should be removed as well:
+#### DeviceTree changes
+
+For most boards, aside from rearranging due to moving to revisions, there should be no changes necessary to the devicetree nodes. However, if your board makes use of upstream Zephyr drivers, these may have been renamed (e.g. Ferris' `microchip,mcp230xx` has been changed to `microchip,mcp23017`).
+
+## General Board/Shield Changes
+
+A few other changes, unrelated to the HWMv2 move, may impact out-of-tree boards/shields:
+
+### Bootloader Setup
+
+With the version bump, the previous method to enable `&bootloader` has been disabled. Instead, ZMK is introducing _boot retention_, which as a side effect also enables `&bootloader` for SoCs which previously didn't work with said behavior, such as the STM32F072. To set up boot retention for your board, please read through [the dedicated page](/docs/development/hardware-integration/bootloader).
+
+### nRF52840 NFC Pins as GPIO
+
+If your board or shield is using either of the nRF52840 NFC pins, as is often done with the XIAO nRF52840, you'll need to perform an additional update.
+
+#### Remove deprecated Kconfig symbol
+
+Previously, using those pins required enabling `CONFIG_NFCT_PINS_AS_GPIOS=y` in some Kconfig file. That Kconfig symbol has been removed, so remove any use of that Kconfig symbol from your board/shield.
+
+#### Set up NFC GPIO devicetree
+
+The following should be added to the board or shield's devicetree, e.g. in `<board>.dtsi` or in a board specific shield overlay file like `<my_shield>/boards/xiao_ble.overlay`:
+
+```dts
+&uicr {
+        nfct-pins-as-gpios;
+};
+```
+
+### nRF52840 DC/DC Modes
+
+For boards with the necessary additional hardware to enable DC/DC modes for the reg0 and/or reg1 power stages, the configuration to enable DC/DC has also moved out of Kconfig and into devicetree.
+
+#### Remove Kconfig Settings
+
+Usually, the DC/DC modes were enabled in the board's `Kconfig.defconfig` file, looking like:
+
+```Kconfig
+config BOARD_ENABLE_DCDC
+    bool "Enable DCDC mode"
+    select SOC_DCDC_NRF52X
+    default y
+    depends on (BOARD_MY_BOARD)
+
+config BOARD_ENABLE_DCDC_HV
+    bool "High voltage DCDC converter"
+    select SOC_DCDC_NRF52X_HV
+    default n
+    depends on (BOARD_MY_BOARD)
+```
+
+Remove the lines from the file that look like above, or remove the `Kconfig.defconfig` file entirely if that is the only content contained therein.
+
+#### Add DC/DC setup to devicetree
+
+The DC/DC mode is now enabled for the `&reg0` and `&reg1` devicetree nodes, depending on which stage you want to use in that mode.
+
+For a high voltage board, where the necessary inductor is connected to the `DCCH` pin, enable the following in the board's `.dts` file:
+
+```dts
+&reg0 {
+    status = "okay";
+};
+```
+
+For both high voltage and non-HV boards, where the necessary inductor is connected to the `DCC` pin, enable the following in the board's `.dts` file:
+
+```dts
+&reg1 {
+    regulator-initial-mode = <NRF5X_REG_MODE_DCDC>;
+};
+```
+
+### RP2040 Board Adjustments
+
+A few small tweaks are required for custom/out-of-tree RP2040 based boards:
+
+#### Clock control
+
+RP2040 boards now require clock control enabled to use several peripherals, including USB.
+
+The following should be added to the board's `<board>_defconfig` file:
+
+```dts
+CONFIG_CLOCK_CONTROL=y
+```
+
+#### Base devicetree changes
+
+The location for the base set of devicetree these boards need to include has changed. In the board's `<board>.dts` file, replace:
+
+```dts
+#include <rpi_pico/rp2040.dtsi>
+```
+
+with
+
+```dts
+#include <raspberrypi/rpi_pico/rp2040.dtsi>
+```
+
+Next, any fixed clock node needs to be removed:
+
+```dts
+    xtal_clk: xtal-clk {
+        compatible = "fixed-clock";
+        clock-frequency = <12000000>;
+        #clock-cells = <0>;
+    };
+```
+
+And the following added, to set up the core device hardware properly:
+
+```dts
+&timer {
+    status = "okay";
+};
+
+&rtc {
+    clocks = <&clocks RPI_PICO_CLKID_CLK_RTC>;
+    status = "okay";
+};
+
+&vreg {
+    regulator-always-on;
+    regulator-allowed-modes = <REGULATOR_RPI_PICO_MODE_NORMAL>;
+};
+```
+
+Lastly, an additional property must be added to the `chosen` node to supplement the existing properties there:
+
+```dts
+/ {
+    chosen {
+        ...
+        zephyr,flash-controller = &ssi;
+        ...
+    };
+};
+```
+
+### LED Strip Kconfig Changes
+
+If your board or shield uses RGB underglow, the following Kconfig flag which was previously enabled should now be removed:
 
 ```
 CONFIG_WS2812_STRIP=y
