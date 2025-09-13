@@ -36,16 +36,18 @@ static const struct device *battery;
 
 #if IS_ENABLED(CONFIG_ZMK_BATTERY_REPORTING_FETCH_MODE_LITHIUM_VOLTAGE)
 static uint8_t lithium_ion_mv_to_pct(int16_t bat_mv) {
-    // Simple linear approximation of a battery based off adafruit's discharge graph:
-    // https://learn.adafruit.com/li-ion-and-lipoly-batteries/voltages
+    // Simple approximation of a battery fully charged at 4.14V and empty at 3V
 
-    if (bat_mv >= 4200) {
+    if (bat_mv >= 4136) {
         return 100;
-    } else if (bat_mv <= 3450) {
+    } else if (bat_mv >= 3920) {
+        return bat_mv * 9 / 99 - 276;
+    } else if (bat_mv >= 3650) {
+        return bat_mv * 22 / 99 - 791;
+    } else if (bat_mv <= 3006) {
         return 0;
-    }
-
-    return bat_mv * 2 / 15 - 459;
+    };
+    return bat_mv * 3 / 98 - 92;
 }
 
 #endif // IS_ENABLED(CONFIG_ZMK_BATTERY_REPORTING_FETCH_MODE_LITHIUM_VOLTAGE)
