@@ -6,10 +6,12 @@ manifest:
       url-base: https://github.com/zmkfirmware
     - name: petejohanson
       url-base: https://github.com/petejohanson
+    - name: galaxyeden
+      url-base: https://github.com/galaxyeden
   projects:
     - name: zephyr
-      remote: petejohanson
-      revision: v4.1.0+zmk-fixes
+      remote: galaxyeden
+      revision: v4.1-coquette
       clone-depth: 1
       import:
         name-blocklist:
@@ -24,8 +26,6 @@ manifest:
           - hal_st
           - hal_ti
           - loramac-node
-          - mcuboot
-          - mcumgr
           - net-tools
           - openthread
           - edtt
