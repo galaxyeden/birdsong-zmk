@@ -518,11 +518,11 @@ menuconfig ZMK_KSCAN
 
 if ZMK_KSCAN
 
-config ZMK_KSCAN_EVENT_QUEUE_SIZE
-    int "Size of the event queue for KSCAN events to buffer events"
-    default 4
-
 endif # ZMK_KSCAN
+
+config ZMK_MATRIX_SCAN_EVENT_QUEUE_SIZE
+    int "Size of the event queue for matrix scan events to buffer events"
+    default 4
 
 config ZMK_KSCAN_SIDEBAND_BEHAVIORS
     bool
