@@ -39,14 +39,6 @@ config BT_DIS_MANUF_NAME_STR
 
 # Hardware specific overrides
 
-if SOC_SERIES_NRF52X
-
-# Default on for our usage until boards implement retained bootmode.
-config NRF_STORE_REBOOT_TYPE_GPREGRET
-    bool
-    default y
-
-endif # SOC_SERIES_NRF52X
 
 menu "HID"
 
@@ -367,7 +359,7 @@ rsource "src/pointing/Kconfig"
 
 menu "Power Management"
 
-config ZMK_BATTERY_REPORTING
+config 
     bool "Battery level detection/reporting"
     select SENSOR
     select ZMK_LOW_PRIORITY_WORK_QUEUE
@@ -696,7 +688,7 @@ config ZMK_KEYMAP_SENSORS_DEFAULT_TRIGGERS_PER_ROTATION
 endif # ZMK_KEYMAP_SENSORS
 
 choice CBPRINTF_IMPLEMENTATION
-    default CBPRINTF_NANO
+    default CBPRINTF_COMPLETE
 
 endchoice
 
