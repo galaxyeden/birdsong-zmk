@@ -25,6 +25,7 @@
 #include <zmk/events/activity_state_changed.h>
 #include <zmk/events/usb_conn_state_changed.h>
 #include <zmk/workqueue.h>
+#include <zephyr/random/random.h>
 
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
@@ -49,6 +50,10 @@ enum rgb_underglow_effect {
     UNDERGLOW_EFFECT_BREATHE,
     UNDERGLOW_EFFECT_SPECTRUM,
     UNDERGLOW_EFFECT_SWIRL,
+    UNDERGLOW_EFFECT_ALLOFMYSTARS,
+    UNDERGLOW_EFFECT_RAINBOWSTARS,
+    UNDERGLOW_EFFECT_YOUANDME,
+    UNDERGLOW_EFFECT_FIREFLIES,
     UNDERGLOW_EFFECT_NUMBER // Used to track number of underglow effects
 };
 
@@ -175,6 +180,158 @@ static void zmk_rgb_underglow_effect_swirl(void) {
     state.animation_step = state.animation_step % HUE_MAX;
 }
 
+static void zmk_rgb_underglow_effect_allofmystars(void) {
+    int rando = 0;
+    int starspeed = 4;
+    if (state.animation_speed <= 1) {
+        starspeed = 8;
+    } else if (state.animation_speed == 2) {
+        starspeed = 4;
+    } else if (state.animation_speed == 3) {
+        starspeed = 2;
+    } else {
+        starspeed = 1;
+    };
+    if (state.animation_step % starspeed == 0) {
+        for (int i = 0; i < STRIP_NUM_PIXELS; i++) {
+            rando = sys_rand16_get() % 11;
+            struct zmk_led_hsb hsb = state.color;
+            hsb.s = SAT_MAX;
+            if (rando != 1) {
+                hsb.b = hsb.b / 9;
+                hsb.h = 270;
+            }
+            pixels[i] = hsb_to_rgb(hsb);
+        };
+    };
+    state.animation_step += 1;
+    state.animation_step = state.animation_step % 1000;
+}
+
+static void zmk_rgb_underglow_effect_rainbowstars(void) {
+    int rando = 0;
+    int starspeed = 4;
+    if (state.animation_speed <= 1) {
+        starspeed = 8;
+    } else if (state.animation_speed == 2) {
+        starspeed = 4;
+    } else if (state.animation_speed == 3) {
+        starspeed = 2;
+    } else {
+        starspeed = 1;
+    };
+    if (state.animation_step % starspeed == 0) {
+        for (int i = 0; i < STRIP_NUM_PIXELS; i++) {
+            rando = sys_rand16_get() % 10;
+            struct zmk_led_hsb hsb = state.color;
+            hsb.h = (sys_rand16_get() % 20) * 18;
+            hsb.s = SAT_MAX;
+            if (rando != 1) {
+                hsb.b = hsb.b / 9;
+                hsb.h = 270;
+            }
+            pixels[i] = hsb_to_rgb(hsb);
+        };
+    };
+    state.animation_step += 1;
+    state.animation_step = state.animation_step % 1000;
+}
+
+static void zmk_rgb_underglow_effect_youandme(void) {
+    int rando = 0;
+    int starspeed = 4;
+    if (state.animation_speed <= 1) {
+        starspeed = 8;
+    } else if (state.animation_speed == 2) {
+        starspeed = 4;
+    } else if (state.animation_speed == 3) {
+        starspeed = 2;
+    } else {
+        starspeed = 1;
+    };
+    if (state.animation_step % starspeed == 0) {
+        for (int i = 0; i < STRIP_NUM_PIXELS; i++) {
+            rando = sys_rand16_get() % 18;
+            struct zmk_led_hsb hsb = state.color;
+            hsb.s = SAT_MAX;
+            if (rando >= 2) {
+                hsb.b = hsb.b / 9;
+                hsb.h = 270;
+            } else if (rando == 1) {
+                hsb.h = (hsb.h + 180) % 360;
+            };
+            pixels[i] = hsb_to_rgb(hsb);
+        };
+    };
+    state.animation_step += 1;
+    state.animation_step = state.animation_step % 1000;
+}
+
+static void zmk_rgb_underglow_effect_fireflies(void) {
+#ifdef CONFIG_LED_STRIP_SPLIT_OFFSET
+    int start = CONFIG_LED_STRIP_SPLIT_OFFSET;
+#else
+    int start = 0;
+#endif /* CONFIG_LED_STRIP_SPLIT_OFFSET */
+    // body
+    if (start != 0) {
+        for (int i = 0; i < start; i++) {
+            struct zmk_led_hsb hsb = state.color;
+            hsb.h = (abs((state.animation_step / 4 % 72) - 36) + 80 + hsb.h) % 360;
+            pixels[i] = hsb_to_rgb(hsb_scale_min_max(hsb));
+        }
+    }
+#if IS_ENABLED(CONFIG_SHIELD_COQUETTE_GACHLILIT)
+    int addon = start + 42;
+    struct zmk_led_hsb hsb = state.color;
+    // feet
+    int feetsies[10] = {28, 29, 30, 31, 36, 37, 38, 39, 40, 41};
+
+    hsb.h = (abs(((state.animation_step / 4) % 48) - 24) + 66 + hsb.h) % 360;
+    for (int i = 0; i < 10; i++) {
+        int pix = feetsies[i] + start;
+        pixels[pix] = hsb_to_rgb(hsb_scale_min_max(hsb));
+    };
+    // wings
+    int wingsOne[4] = {32, 17, 18, 27};
+    int wingsTwo[8] = {34, 33, 16, 6, 5, 19, 26, 25};
+    int wingsThree[10] = {35, 13, 14, 15, 7, 4, 20, 21, 22, 24};
+    int wingsFour[10] = {12, 11, 10, 9, 8, 3, 2, 1, 0, 23};
+
+    hsb.h = (abs((state.animation_step % 144) - 72) + 108 + hsb.h) % 360;
+    for (int i = 0; i < 4; i++) {
+        int pix = wingsOne[i] + start;
+        pixels[pix] = hsb_to_rgb(hsb_scale_min_max(hsb));
+    };
+    hsb.h = (abs((state.animation_step % 144) - 72) + 72 + hsb.h) % 360;
+    for (int i = 0; i < 8; i++) {
+        int pix = wingsTwo[i] + start;
+        pixels[pix] = hsb_to_rgb(hsb_scale_min_max(hsb));
+    };
+    hsb.h = (abs((state.animation_step % 144) - 72) + 36 + hsb.h) % 360;
+    for (int i = 0; i < 10; i++) {
+        int pix = wingsThree[i] + start;
+        pixels[pix] = hsb_to_rgb(hsb_scale_min_max(hsb));
+    };
+    hsb.h = (abs((state.animation_step % 144) - 72) + hsb.h) % 360;
+    for (int i = 0; i < 10; i++) {
+        int pix = wingsFour[i] + start;
+        pixels[pix] = hsb_to_rgb(hsb_scale_min_max(hsb));
+    };
+#else
+    int addon = start;
+#endif /* IS_ENABLED(CONFIG_SHIELD_COQUETTE_GACHLILIT) */
+    int addonNumber = STRIP_NUM_PIXELS - addon;
+    for (int i = 0; i < addonNumber; i++) {
+        struct zmk_led_hsb hsb = state.color;
+        hsb.h = (HUE_MAX / addonNumber * i + state.animation_step) % HUE_MAX;
+
+        pixels[(i + addon)] = hsb_to_rgb(hsb_scale_min_max(hsb));
+    }
+    state.animation_step += state.animation_speed * 2;
+    state.animation_step = state.animation_step % 4320;
+}
+
 static void zmk_rgb_underglow_tick(struct k_work *work) {
     switch (state.current_effect) {
     case UNDERGLOW_EFFECT_SOLID:
@@ -188,6 +345,18 @@ static void zmk_rgb_underglow_tick(struct k_work *work) {
         break;
     case UNDERGLOW_EFFECT_SWIRL:
         zmk_rgb_underglow_effect_swirl();
+        break;
+    case UNDERGLOW_EFFECT_ALLOFMYSTARS:
+        zmk_rgb_underglow_effect_allofmystars();
+        break;
+    case UNDERGLOW_EFFECT_RAINBOWSTARS:
+        zmk_rgb_underglow_effect_rainbowstars();
+        break;
+    case UNDERGLOW_EFFECT_YOUANDME:
+        zmk_rgb_underglow_effect_youandme();
+        break;
+    case UNDERGLOW_EFFECT_FIREFLIES:
+        zmk_rgb_underglow_effect_fireflies();
         break;
     }
 
@@ -300,7 +469,6 @@ int zmk_rgb_underglow_get_state(bool *on_off) {
 int zmk_rgb_underglow_on(void) {
     if (!led_strip)
         return -ENODEV;
-
 #if IS_ENABLED(CONFIG_ZMK_RGB_UNDERGLOW_EXT_POWER)
     if (ext_power != NULL) {
         int rc = ext_power_enable(ext_power);
@@ -309,7 +477,6 @@ int zmk_rgb_underglow_on(void) {
         }
     }
 #endif
-
     state.on = true;
     state.animation_step = 0;
     k_timer_start(&underglow_tick, K_NO_WAIT, K_MSEC(50));
@@ -510,7 +677,7 @@ static int rgb_underglow_event_listener(const zmk_event_t *eh) {
 
 ZMK_LISTENER(rgb_underglow, rgb_underglow_event_listener);
 #endif // IS_ENABLED(CONFIG_ZMK_RGB_UNDERGLOW_AUTO_OFF_IDLE) ||
-       // IS_ENABLED(CONFIG_ZMK_RGB_UNDERGLOW_AUTO_OFF_USB)
+// IS_ENABLED(CONFIG_ZMK_RGB_UNDERGLOW_AUTO_OFF_USB)
 
 #if IS_ENABLED(CONFIG_ZMK_RGB_UNDERGLOW_AUTO_OFF_IDLE)
 ZMK_SUBSCRIPTION(rgb_underglow, zmk_activity_state_changed);
