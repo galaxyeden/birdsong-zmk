@@ -8,17 +8,17 @@
 #include <zephyr/init.h>
 #include <zephyr/kernel.h>
 #include <zephyr/settings/settings.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/drivers/led_strip.h>
 
 #include <math.h>
 #include <stdlib.h>
 
-#include <zephyr/logging/log.h>
+#include <nrfx_clock.h>
 
-#include <zephyr/drivers/led_strip.h>
 #include <drivers/ext_power.h>
 
 #include <zmk/rgb_underglow.h>
-
 #include <zmk/activity.h>
 #include <zmk/usb.h>
 #include <zmk/event_manager.h>
@@ -391,7 +391,7 @@ static int rgb_settings_set(const char *name, size_t len, settings_read_cb read_
         rc = read_cb(cb_arg, &state, sizeof(state));
         if (rc >= 0) {
             if (state.on) {
-                k_timer_start(&underglow_tick, K_NO_WAIT, K_MSEC(50));
+                k_timer_start(&underglow_tick, K_NO_WAIT, K_MSEC(42));
             }
 
             return 0;
@@ -477,6 +477,7 @@ int zmk_rgb_underglow_on(void) {
         }
     }
 #endif
+    nrfx_clock_divider_set(NRF_CLOCK_DOMAIN_HFCLK, NRF_CLOCK_HFCLK_DIV_1);
     state.on = true;
     state.animation_step = 0;
     k_timer_start(&underglow_tick, K_NO_WAIT, K_MSEC(50));
@@ -511,6 +512,7 @@ int zmk_rgb_underglow_off(void) {
 
     k_timer_stop(&underglow_tick);
     state.on = false;
+    nrfx_clock_divider_set(NRF_CLOCK_DOMAIN_HFCLK, NRF_CLOCK_HFCLK_DIV_2);
 
     return zmk_rgb_underglow_save_state();
 }
