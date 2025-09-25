@@ -1,9 +1,0 @@
-config SHIELD_ERGO_WIRELESS_LEFT
-    def_bool $(shields_list_contains,ergo_wireless_left)
-
-config SHIELD_ERGO_WIRELESS_RIGHT
-    def_bool $(shields_list_contains,ergo_wireless_right)
-
-config SHIELD_ERGO_WIRELESS_DONGLE
-    def_bool $(shields_list_contains,ergo_wireless_dongle)
-
