@@ -27,29 +27,7 @@ config USB_DEVICE_PRODUCT
 config BT_DEVICE_NAME
     default ZMK_KEYBOARD_NAME
 
-config USB_DEVICE_VID
-    default 0x1D50
-
-config USB_DEVICE_PID
-    default 0x615E
-
-config USB_DEVICE_MANUFACTURER
-    default "ZMK Project"
-
-config BT_DIS_PNP_VID
-    default 0x1D50
-
-config BT_DIS_PNP_PID
-    default 0x615E
-
-config BT_DIS_MODEL_NUMBER_STR
-    default ZMK_KEYBOARD_NAME
-
-config BT_DIS_MANUF_NAME_STR
-    default "ZMK Project"
-
 # Hardware specific overrides
-
 
 menu "HID"
 
@@ -563,7 +541,7 @@ config ZMK_USB_LOGGING
     bool "Enable USB CDC ACM logging to help debug"
     select LOG
     select USB
-    select USB_DEVICE_STACK
+    imply USB_DEVICE_STACK
     select USB_CDC_ACM
     select SERIAL
     select CONSOLE
