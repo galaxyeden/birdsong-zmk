@@ -16,21 +16,6 @@ config USB_DEVICE_PRODUCT
 config BT_DEVICE_NAME
     default ZMK_KEYBOARD_NAME
 
-config USB_DEVICE_VID
-    default 0x1D50
-
-config USB_DEVICE_PID
-    default 0x615E
-
-config USB_DEVICE_MANUFACTURER
-    default "ZMK Project"
-
-config BT_DIS_PNP_VID
-    default 0x1D50
-
-config BT_DIS_PNP_PID
-    default 0x615E
-
 # Hardware specific overrides
 
 if SOC_SERIES_NRF52X
@@ -510,10 +495,6 @@ menuconfig ZMK_KSCAN
     default y
     select KSCAN
 
-if ZMK_KSCAN
-
-endif # ZMK_KSCAN
-
 config ZMK_MATRIX_SCAN_EVENT_QUEUE_SIZE
     int "Size of the event queue for matrix scan events to buffer events"
     default 4
@@ -550,7 +531,7 @@ config ZMK_USB_LOGGING
     bool "Enable USB CDC ACM logging to help debug"
     select LOG
     select USB
-    select USB_DEVICE_STACK
+    imply USB_DEVICE_STACK
     select USB_CDC_ACM
     select SERIAL
     select CONSOLE
