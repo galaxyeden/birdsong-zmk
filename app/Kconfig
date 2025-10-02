@@ -16,29 +16,7 @@ config USB_DEVICE_PRODUCT
 config BT_DEVICE_NAME
     default ZMK_KEYBOARD_NAME
 
-config USB_DEVICE_VID
-    default 0x1D50
-
-config USB_DEVICE_PID
-    default 0x615E
-
-config USB_DEVICE_MANUFACTURER
-    default "ZMK Project"
-
-config BT_DIS_PNP_VID
-    default 0x1D50
-
-config BT_DIS_PNP_PID
-    default 0x615E
-
-config BT_DIS_MODEL_NUMBER_STR
-    default ZMK_KEYBOARD_NAME
-
-config BT_DIS_MANUF_NAME_STR
-    default "ZMK Project"
-
 # Hardware specific overrides
-
 
 menu "HID"
 
@@ -504,10 +482,15 @@ menuconfig ZMK_KSCAN
     default y
     select KSCAN
 
+<<<<<<< HEAD
 if ZMK_KSCAN
 
 config ZMK_KSCAN_EVENT_QUEUE_SIZE
     int "Size of the event queue for KSCAN events to buffer events"
+=======
+config ZMK_MATRIX_SCAN_EVENT_QUEUE_SIZE
+    int "Size of the event queue for matrix scan events to buffer events"
+>>>>>>> fcb195bd (changes to usb stack settings)
     default 4
 
 endif # ZMK_KSCAN
@@ -544,7 +527,7 @@ config ZMK_USB_LOGGING
     bool "Enable USB CDC ACM logging to help debug"
     select LOG
     select USB
-    select USB_DEVICE_STACK
+    imply USB_DEVICE_STACK
     select USB_CDC_ACM
     select SERIAL
     select CONSOLE
