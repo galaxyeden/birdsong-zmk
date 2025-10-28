@@ -492,8 +492,7 @@ config ZMK_PHYSICAL_LAYOUT_KEY_ROTATION
 
 menuconfig ZMK_KSCAN
     bool "ZMK KScan Integration"
-    default y
-    select KSCAN
+    default n
 
 config ZMK_MATRIX_SCAN_EVENT_QUEUE_SIZE
     int "Size of the event queue for matrix scan events to buffer events"
@@ -501,9 +500,8 @@ config ZMK_MATRIX_SCAN_EVENT_QUEUE_SIZE
 
 config ZMK_KSCAN_SIDEBAND_BEHAVIORS
     bool
-    default y
+    default n
     depends on DT_HAS_ZMK_KSCAN_SIDEBAND_BEHAVIORS_ENABLED
-    select KSCAN
 
 if ZMK_KSCAN_SIDEBAND_BEHAVIORS
 
@@ -674,11 +672,6 @@ config ZMK_KEYMAP_SENSORS_DEFAULT_TRIGGERS_PER_ROTATION
 
 endif # ZMK_KEYMAP_SENSORS
 
-choice CBPRINTF_IMPLEMENTATION
-    default CBPRINTF_NANO
-
-endchoice
-
 module = ZMK
 module-str = zmk
 source "subsys/logging/Kconfig.template.log_config"
@@ -690,6 +683,7 @@ rsource "boards/shields/*/Kconfig.shield"
 
 # This loads custom shields defconfigs (from BOARD_ROOT)
 # Duplicated from Kconfig.zephyr
+source "Kconfig.zephyr"
 osource "$(KCONFIG_BINARY_DIR)/Kconfig.shield.defconfig"
 
 # source "$(BOARD_DIR)/Kconfig.defconfig"
@@ -701,4 +695,3 @@ osource "$(ZMK_CONFIG)/boards/shields/*/Kconfig.shield"
 # This loads ZMK's sensible defaults
 rsource "Kconfig.defaults"
 
-source "Kconfig.zephyr"
