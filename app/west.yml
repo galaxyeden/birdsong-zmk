@@ -11,7 +11,7 @@ manifest:
   projects:
     - name: zephyr
       remote: galaxyeden
-      revision: v4.1-coquette
+      revision: bb3e9c06c4d0d2600beb249ca4dc077ca584fb4a
       clone-depth: 1
       import:
         name-blocklist:
