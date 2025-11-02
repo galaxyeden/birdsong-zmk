@@ -346,7 +346,7 @@ rsource "src/pointing/Kconfig"
 
 menu "Power Management"
 
-config 
+config ZMK_BATTERY_REPORTING
     bool "Battery level detection/reporting"
     select SENSOR
     select ZMK_LOW_PRIORITY_WORK_QUEUE
