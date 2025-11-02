@@ -1,5 +1,8 @@
 # Zephyr™ Mechanical Keyboard (ZMK) Firmware
 
+## note – birdsong fork
+This branch is intended for specific devices supported by the birdsong project so that ZMK can be used on them, and probably won't work with _your_ keyboard!
+
 [![Discord](https://img.shields.io/discord/719497620560543766)](https://zmk.dev/community/discord/invite)
 [![Build](https://github.com/zmkfirmware/zmk/workflows/Build/badge.svg)](https://github.com/zmkfirmware/zmk/actions)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
