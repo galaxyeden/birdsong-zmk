@@ -211,7 +211,7 @@ static struct zmk_kscan_msg_processor {
 } msg_processor;
 
 K_MSGQ_DEFINE(physical_layouts_kscan_msgq, sizeof(struct zmk_kscan_event),
-              CONFIG_ZMK_KSCAN_EVENT_QUEUE_SIZE, 4);
+              CONFIG_ZMK_MATRIX_SCAN_EVENT_QUEUE_SIZE, 4);
 
 #if IS_ENABLED(CONFIG_INPUT)
 
