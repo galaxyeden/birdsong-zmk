@@ -68,7 +68,7 @@ config ZMK_RGB_UNDERGLOW_BRT_STEP
     default 10
 
 config ZMK_RGB_UNDERGLOW_HUE_START
-    default 0
+    default 342
 
 config ZMK_RGB_UNDERGLOW_SAT_START
     default 100
@@ -77,10 +77,10 @@ config ZMK_RGB_UNDERGLOW_BRT_START
     default ZMK_RGB_UNDERGLOW_BRT_MAX
 
 config ZMK_RGB_UNDERGLOW_SPD_START
-    default 3
+    default 1
 
 config ZMK_RGB_UNDERGLOW_EFF_START
-    default 0
+    default 4
 
 config ZMK_RGB_UNDERGLOW_ON_START
     default y
