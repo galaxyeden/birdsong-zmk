@@ -35,11 +35,13 @@ static struct zmk_widget_layer_status layer_status_widget;
 static struct zmk_widget_wpm_status wpm_status_widget;
 #endif
 
-#if IS_ENABLED(CONFIG_COQUETTE_BAT_WIDGET)
+#if IS_ENABLED(CONFIG_BIRDSONG_HW_BAT_WIDGET)
 static struct birdsong_battery_widget birdbat_widget;
-#endif // IS_ENABLED(CONFIG_COQUETTE_BAT_WIDGET)
+#endif // IS_ENABLED(CONFIG_BIRDSONG_HW_BAT_WIDGET)
 
+#if IS_ENABLED(CONFIG_BOARD_COQUETTE)
 extern const lv_image_dsc_t cq_background;
+#endif // IS_ENABLED(CONFIG_BOARD_COQUETTE)
 
 lv_obj_t *zmk_display_status_screen() {
     lv_obj_t *screen;
@@ -73,9 +75,9 @@ lv_obj_t *zmk_display_status_screen() {
     lv_obj_align(zmk_widget_wpm_status_obj(&wpm_status_widget), LV_ALIGN_BOTTOM_RIGHT, 0, 0);
 #endif
 
-#if IS_ENABLED(CONFIG_COQUETTE_BAT_WIDGET)
+#if IS_ENABLED(CONFIG_BIRDSONG_HW_BAT_WIDGET)
     birdbat_widget_init(&birdbat_widget, screen);
     lv_obj_align(birdbat_widget_obj(&birdbat_widget), LV_ALIGN_TOP_RIGHT, 0, 0);
-#endif // IS_ENABLED(CONFIG_COQUETTE_BAT_WIDGET)
+#endif // IS_ENABLED(CONFIG_BIRDSONG_HW_BAT_WIDGET)
     return screen;
 }
