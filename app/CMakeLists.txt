@@ -20,9 +20,6 @@ zephyr_syscall_header(${APPLICATION_SOURCE_DIR}/include/drivers/behavior.h)
 zephyr_syscall_header(${APPLICATION_SOURCE_DIR}/include/drivers/input_processor.h)
 zephyr_syscall_header(${APPLICATION_SOURCE_DIR}/include/drivers/ext_power.h)
 
-# use C23
-set_property(TARGET app PROPERTY C_STANDARD 23)
-
 # Add your source file to the "app" target. This must come after
 # find_package(Zephyr) which defines the target.
 target_include_directories(app PRIVATE include)
@@ -30,7 +27,6 @@ add_subdirectory(src/boot)
 target_sources(app PRIVATE src/stdlib.c)
 target_sources(app PRIVATE src/activity.c)
 target_sources(app PRIVATE src/behavior.c)
-target_sources_ifdef(CONFIG_ZMK_KSCAN_SIDEBAND_BEHAVIORS app PRIVATE src/kscan_sideband_behaviors.c)
 target_sources(app PRIVATE src/matrix_transform.c)
 target_sources(app PRIVATE src/physical_layouts.c)
 target_sources(app PRIVATE src/sensors.c)
