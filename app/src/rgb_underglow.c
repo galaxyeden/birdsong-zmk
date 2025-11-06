@@ -10,14 +10,13 @@
 #include <zephyr/settings/settings.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/drivers/led_strip.h>
+#include <zephyr/pm/device_runtime.h>
 
 #include <math.h>
 #include <stdlib.h>
 #include <stdint.h>
 
 #include <nrfx_clock.h>
-
-#include <drivers/ext_power.h>
 
 #include <zmk/rgb_underglow.h>
 #include <zmk/activity.h>
@@ -71,10 +70,6 @@ static const struct device *led_strip;
 static struct led_rgb pixels[STRIP_NUM_PIXELS];
 
 static struct rgb_underglow_state state;
-
-#if IS_ENABLED(CONFIG_ZMK_RGB_UNDERGLOW_EXT_POWER)
-static const struct device *const ext_power = DEVICE_DT_GET(DT_INST(0, zmk_ext_power_generic));
-#endif
 
 static struct zmk_led_hsb hsb_scale_min_max(struct zmk_led_hsb hsb) {
     hsb.b = CONFIG_ZMK_RGB_UNDERGLOW_BRT_MIN +
@@ -421,13 +416,6 @@ static struct k_work_delayable underglow_save_work;
 static int zmk_rgb_underglow_init(void) {
     led_strip = DEVICE_DT_GET(STRIP_CHOSEN);
 
-#if IS_ENABLED(CONFIG_ZMK_RGB_UNDERGLOW_EXT_POWER)
-    if (!device_is_ready(ext_power)) {
-        LOG_ERR("External power device \"%s\" is not ready", ext_power->name);
-        return -ENODEV;
-    }
-#endif
-
     state = (struct rgb_underglow_state){
         color : {
             h : CONFIG_ZMK_RGB_UNDERGLOW_HUE_START,
@@ -475,15 +463,12 @@ int zmk_rgb_underglow_get_state(bool *on_off) {
 int zmk_rgb_underglow_on(void) {
     if (!led_strip)
         return -ENODEV;
-#if IS_ENABLED(CONFIG_ZMK_RGB_UNDERGLOW_EXT_POWER)
-    if (ext_power != NULL) {
-        int rc = ext_power_enable(ext_power);
-        if (rc != 0) {
-            LOG_ERR("Unable to enable EXT_POWER: %d", rc);
-        }
-    }
-#endif
+#if IS_ENABLED(CONFIG_PM_DEVICE_RUNTIME)
+    pm_device_runtime_get(led_strip);
+#endif // IS_ENABLED(CONFIG_PM_DEVICE_RUNTIME))
+#if IS_ENABLED(CONFIG_BIRDSONG_SHELL_CLOCK)
     nrfx_clock_divider_set(NRF_CLOCK_DOMAIN_HFCLK, NRF_CLOCK_HFCLK_DIV_1);
+#endif // IS_ENABLED(CONFIG_BIRDSONG_SHELL_CLOCK)
     state.on = true;
     state.animation_step = 0;
     k_timer_start(&underglow_tick, K_NO_WAIT, K_MSEC(50));
@@ -504,21 +489,17 @@ K_WORK_DEFINE(underglow_off_work, zmk_rgb_underglow_off_handler);
 int zmk_rgb_underglow_off(void) {
     if (!led_strip)
         return -ENODEV;
-
-#if IS_ENABLED(CONFIG_ZMK_RGB_UNDERGLOW_EXT_POWER)
-    if (ext_power != NULL) {
-        int rc = ext_power_disable(ext_power);
-        if (rc != 0) {
-            LOG_ERR("Unable to disable EXT_POWER: %d", rc);
-        }
-    }
-#endif
+#if IS_ENABLED(CONFIG_PM_DEVICE_RUNTIME)
+    pm_device_runtime_put(led_strip);
+#endif // IS_ENABLED(CONFIG_PM_DEVICE_RUNTIME))
 
     k_work_submit_to_queue(zmk_workqueue_lowprio_work_q(), &underglow_off_work);
 
     k_timer_stop(&underglow_tick);
     state.on = false;
+#if IS_ENABLED(CONFIG_BIRDSONG_SHELL_CLOCK)
     nrfx_clock_divider_set(NRF_CLOCK_DOMAIN_HFCLK, NRF_CLOCK_HFCLK_DIV_2);
+#endif // IS_ENABLED(CONFIG_BIRDSONG_SHELL_CLOCK)
 
     return zmk_rgb_underglow_save_state();
 }
