@@ -194,7 +194,7 @@ static void zmk_rgb_underglow_effect_allofmystars(void) {
     };
     if (state.animation_step % starspeed == 0) {
         for (int i = 0; i < STRIP_NUM_PIXELS; i++) {
-            rando = sys_rand16_get() % 11;
+            rando = sys_rand8_get() % 11;
             struct zmk_led_hsb hsb = state.color;
             hsb.s = SAT_MAX;
             if (rando != 1) {
@@ -202,6 +202,7 @@ static void zmk_rgb_underglow_effect_allofmystars(void) {
                 hsb.h = 270;
             }
             pixels[i] = hsb_to_rgb(hsb);
+            k_usleep(42);
         };
     };
     state.animation_step += 1;
@@ -222,15 +223,16 @@ static void zmk_rgb_underglow_effect_rainbowstars(void) {
     };
     if (state.animation_step % starspeed == 0) {
         for (int i = 0; i < STRIP_NUM_PIXELS; i++) {
-            rando = sys_rand16_get() % 10;
+            rando = sys_rand8_get() % 10;
             struct zmk_led_hsb hsb = state.color;
-            hsb.h = (sys_rand16_get() % 20) * 18;
+            hsb.h = (sys_rand8_get() % 20) * 18;
             hsb.s = SAT_MAX;
             if (rando != 1) {
                 hsb.b = hsb.b / 9;
                 hsb.h = 270;
             }
             pixels[i] = hsb_to_rgb(hsb);
+            k_usleep(42);
         };
     };
     state.animation_step += 1;
@@ -251,7 +253,7 @@ static void zmk_rgb_underglow_effect_youandme(void) {
     };
     if (state.animation_step % starspeed == 0) {
         for (int i = 0; i < STRIP_NUM_PIXELS; i++) {
-            rando = sys_rand16_get() % 18;
+            rando = sys_rand8_get() % 18;
             struct zmk_led_hsb hsb = state.color;
             hsb.s = SAT_MAX;
             if (rando >= 2) {
@@ -261,6 +263,7 @@ static void zmk_rgb_underglow_effect_youandme(void) {
                 hsb.h = (hsb.h + 180) % 360;
             };
             pixels[i] = hsb_to_rgb(hsb);
+            k_usleep(42);
         };
     };
     state.animation_step += 1;
