@@ -13,6 +13,7 @@
 
 #include <math.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 #include <nrfx_clock.h>
 
@@ -181,8 +182,8 @@ static void zmk_rgb_underglow_effect_swirl(void) {
 }
 
 static void zmk_rgb_underglow_effect_allofmystars(void) {
-    int rando = 0;
-    int starspeed = 4;
+    uint8_t rando = 0;
+    uint8_t starspeed = 4;
     if (state.animation_speed <= 1) {
         starspeed = 8;
     } else if (state.animation_speed == 2) {
@@ -206,12 +207,13 @@ static void zmk_rgb_underglow_effect_allofmystars(void) {
         };
     };
     state.animation_step += 1;
-    state.animation_step = state.animation_step % 1000;
+    state.animation_step = state.animation_step % 1200;
 }
 
 static void zmk_rgb_underglow_effect_rainbowstars(void) {
-    int rando = 0;
-    int starspeed = 4;
+    uint16_t randdata = 0;
+    uint8_t rando = 0;
+    uint8_t starspeed = 4;
     if (state.animation_speed <= 1) {
         starspeed = 8;
     } else if (state.animation_speed == 2) {
@@ -223,9 +225,10 @@ static void zmk_rgb_underglow_effect_rainbowstars(void) {
     };
     if (state.animation_step % starspeed == 0) {
         for (int i = 0; i < STRIP_NUM_PIXELS; i++) {
-            rando = sys_rand8_get() % 10;
+            randdata = sys_rand16_get();
+            rando = (randdata & 0xFF) % 10;
             struct zmk_led_hsb hsb = state.color;
-            hsb.h = (sys_rand8_get() % 20) * 18;
+            hsb.h = (((randdata & 0xFF00) >> 8) % 20) * 18;
             hsb.s = SAT_MAX;
             if (rando != 1) {
                 hsb.b = hsb.b / 9;
@@ -236,12 +239,12 @@ static void zmk_rgb_underglow_effect_rainbowstars(void) {
         };
     };
     state.animation_step += 1;
-    state.animation_step = state.animation_step % 1000;
+    state.animation_step = state.animation_step % 1200;
 }
 
 static void zmk_rgb_underglow_effect_youandme(void) {
-    int rando = 0;
-    int starspeed = 4;
+    uint8_t rando = 0;
+    uint8_t starspeed = 4;
     if (state.animation_speed <= 1) {
         starspeed = 8;
     } else if (state.animation_speed == 2) {
@@ -267,7 +270,7 @@ static void zmk_rgb_underglow_effect_youandme(void) {
         };
     };
     state.animation_step += 1;
-    state.animation_step = state.animation_step % 1000;
+    state.animation_step = state.animation_step % 1200;
 }
 
 static void zmk_rgb_underglow_effect_fireflies(void) {
