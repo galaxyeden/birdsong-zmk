@@ -67,9 +67,9 @@ struct rgb_underglow_state {
 
 static const struct device *led_strip;
 
-#if IS_ENABLED(CONFIG_PM_DEVICE_RUNTIME)
+#if IS_ENABLED(CONFIG_PM_DEVICE_RUNTIME) && DT_HAS_CHOSEN(skji_fireflies_argb_pwr)
 static const struct device *argb_power = DEVICE_DT_GET(DT_CHOSEN(skji_fireflies_argb_pwr));
-#endif // IS_ENABLED(CONFIG_PM_DEVICE_RUNTIME))
+#endif // IS_ENABLED(CONFIG_PM_DEVICE_RUNTIME)) && DT_HAS_CHOSEN(skji_fireflies_argb_pwr)
 
 static struct led_rgb pixels[STRIP_NUM_PIXELS];
 
@@ -496,6 +496,7 @@ int zmk_rgb_underglow_on(void) {
         return -ENODEV;
 #if IS_ENABLED(CONFIG_PM_DEVICE_RUNTIME)
     pm_device_runtime_get(argb_power);
+    k_msleep(4);
 #endif // IS_ENABLED(CONFIG_PM_DEVICE_RUNTIME))
 #if IS_ENABLED(CONFIG_BIRDSONG_SHELL_CLOCK)
     nrfx_clock_divider_set(NRF_CLOCK_DOMAIN_HFCLK, NRF_CLOCK_HFCLK_DIV_1);
