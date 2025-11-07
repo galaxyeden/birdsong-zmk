@@ -320,7 +320,7 @@ int zmk_physical_layouts_select_layout(const struct zmk_physical_layout *dest_la
     if (active) {
         if (active->input) {
 #if IS_ENABLED(CONFIG_PM_DEVICE_RUNTIME)
-            pm_device_runtime_get(active->input);
+            pm_device_runtime_put(active->input);
 #elif IS_ENABLED(CONFIG_PM_DEVICE)
             pm_device_action_run(active->input, PM_DEVICE_ACTION_SUSPEND);
 #endif

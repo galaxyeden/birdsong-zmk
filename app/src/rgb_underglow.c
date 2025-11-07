@@ -418,6 +418,7 @@ static struct k_work_delayable underglow_save_work;
 #endif
 
 static int zmk_rgb_underglow_init(void) {
+    int ret = 0;
     led_strip = DEVICE_DT_GET(STRIP_CHOSEN);
 
     state = (struct rgb_underglow_state){
@@ -441,10 +442,10 @@ static int zmk_rgb_underglow_init(void) {
 #endif
 
     if (state.on) {
-        k_timer_start(&underglow_tick, K_NO_WAIT, K_MSEC(50));
-    }
+        ret = zmk_rgb_underglow_on();
+    };
 
-    return 0;
+    return ret;
 }
 
 int zmk_rgb_underglow_save_state(void) {
