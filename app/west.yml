@@ -11,7 +11,7 @@ manifest:
   projects:
     - name: zephyr
       remote: galaxyeden
-      revision: bb3e9c06c4d0d2600beb249ca4dc077ca584fb4a
+      revision: b9c2b7ccd52a5731451366ade31657f2e23203ef
       clone-depth: 1
       import:
         name-blocklist:
