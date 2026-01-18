@@ -69,8 +69,8 @@ const struct zmk_matrix_transform zmk_matrix_transform_default = {
 
 #else
 
-#error "Need a matrix transform or compatible kscan selected to determine keymap size!"
-`
+#error "Need a matrix transform selected to determine keymap size!"
+
 #endif // DT_HAS_COMPAT_STATUS_OKAY(zmk_matrix_transform)
 
 int32_t zmk_matrix_transform_row_column_to_position(zmk_matrix_transform_t mt, uint32_t row,
