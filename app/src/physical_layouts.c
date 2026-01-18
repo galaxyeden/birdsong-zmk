@@ -258,6 +258,8 @@ static void zmk_physical_layout_input_event_cb(struct input_event *evt, void *us
     }
 }
 
+#endif
+
 static void zmk_physical_layouts_kscan_process_msgq(struct k_work *item) {
     struct zmk_kscan_event ev;
 
