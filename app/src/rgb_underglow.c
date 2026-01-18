@@ -42,6 +42,10 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 #define SAT_MAX 100
 #define BRT_MAX 100
 
+#if DT_HAS_CHOSEN(skji_fireflies_argb_pwr)
+static const struct device *argb_pwr = DEVICE_DT_GET(DT_CHOSEN(skji_fireflies_argb_pwr));
+#endif // DT_HAS_CHOSEN(skji_fireflies_argb_pwr)
+
 BUILD_ASSERT(CONFIG_ZMK_RGB_UNDERGLOW_BRT_MIN <= CONFIG_ZMK_RGB_UNDERGLOW_BRT_MAX,
              "ERROR: RGB underglow maximum brightness is less than minimum brightness");
 
@@ -465,6 +469,9 @@ int zmk_rgb_underglow_on(void) {
         return -ENODEV;
 #if IS_ENABLED(CONFIG_PM_DEVICE_RUNTIME)
     pm_device_runtime_get(led_strip);
+    if (pm_device_runtime_usage(argb_pwr) == 0) {
+        pm_device_runtime_get(argb_pwr);
+    };
 #endif // IS_ENABLED(CONFIG_PM_DEVICE_RUNTIME))
 #if IS_ENABLED(CONFIG_BIRDSONG_SHELL_CLOCK)
     nrfx_clock_divider_set(NRF_CLOCK_DOMAIN_HFCLK, NRF_CLOCK_HFCLK_DIV_1);
@@ -491,6 +498,7 @@ int zmk_rgb_underglow_off(void) {
         return -ENODEV;
 #if IS_ENABLED(CONFIG_PM_DEVICE_RUNTIME)
     pm_device_runtime_put(led_strip);
+    pm_device_runtime_put(argb_pwr);
 #endif // IS_ENABLED(CONFIG_PM_DEVICE_RUNTIME))
 
     k_work_submit_to_queue(zmk_workqueue_lowprio_work_q(), &underglow_off_work);
