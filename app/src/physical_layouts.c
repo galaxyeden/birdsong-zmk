@@ -168,10 +168,6 @@ static const struct zmk_physical_layout _CONCAT(_zmk_physical_layout_, chosen) =
     .display_name = "Default",
     .matrix_transform = &zmk_matrix_transform_default,
     .input = DEVICE_DT_GET(DT_CHOSEN(zmk_matrix_input)),
-<<<<<<< HEAD
-=======
-#endif
->>>>>>> 945698fc (layouts)
 };
 
 #if DT_HAS_CHOSEN(zmk_matrix_input)
@@ -321,7 +317,6 @@ int zmk_physical_layouts_select_layout(const struct zmk_physical_layout *dest_la
     }
 
     if (active) {
-<<<<<<< HEAD
         const struct device *matrix = NULL;
         if (active->input) {
             matrix = active->input;
@@ -332,13 +327,6 @@ int zmk_physical_layouts_select_layout(const struct zmk_physical_layout *dest_la
             pm_device_runtime_put(matrix);
 #elif IS_ENABLED(CONFIG_PM_DEVICE)
             pm_device_action_run(matrix, PM_DEVICE_ACTION_SUSPEND);
-=======
-        if (active->input) {
-#if IS_ENABLED(CONFIG_PM_DEVICE_RUNTIME)
-            pm_device_runtime_get(active->input);
-#elif IS_ENABLED(CONFIG_PM_DEVICE)
-            pm_device_action_run(active->input, PM_DEVICE_ACTION_SUSPEND);
->>>>>>> 945698fc (layouts)
 #endif
         }
     }
@@ -354,27 +342,17 @@ int zmk_physical_layouts_select_layout(const struct zmk_physical_layout *dest_la
 
     active = dest_layout;
 
-<<<<<<< HEAD
     const struct device *next_matrix = active->input;
 
     if (next_matrix) {
 #if IS_ENABLED(CONFIG_PM_DEVICE_RUNTIME)
         int err = pm_device_runtime_get(next_matrix);
-=======
-    if (active->input) {
-#if IS_ENABLED(CONFIG_PM_DEVICE_RUNTIME)
-        int err = pm_device_runtime_get(active->input);
->>>>>>> 945698fc (layouts)
         if (err < 0) {
             LOG_WRN("PM runtime get of input device to enable it %d", err);
             return err;
         }
 #elif IS_ENABLED(CONFIG_PM_DEVICE)
-<<<<<<< HEAD
         pm_device_action_run(next_matrix, PM_DEVICE_ACTION_RESUME);
-=======
-        pm_device_action_run(active->input, PM_DEVICE_ACTION_RESUME);
->>>>>>> 945698fc (layouts)
 #endif
     }
 
