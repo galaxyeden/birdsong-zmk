@@ -49,13 +49,13 @@ static void set_status_symbol(lv_obj_t *label, struct output_status_state state)
 
     switch (transport) {
     case ZMK_TRANSPORT_NONE:
-        strcat(text, LV_SYMBOL_CLOSE);
+        strcat(text, LV_SYMBOL_UPLOAD);
         break;
 
     case ZMK_TRANSPORT_USB:
         strcat(text, LV_SYMBOL_USB);
         if (!connected) {
-            strcat(text, " " LV_SYMBOL_CLOSE);
+            strcat(text, " " LV_SYMBOL_UPLOAD);
         }
         break;
 
