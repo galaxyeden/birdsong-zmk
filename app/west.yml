@@ -10,6 +10,8 @@ manifest:
       url-base: https://github.com/galaxyeden
   projects:
     - name: zephyr
+#      remote: petejohanson
+#      revision: d803a47f4f1b250da0b10abb5f5056d3f1155ae6
       remote: galaxyeden
       revision: v4.4-birdsong
       clone-depth: 1
